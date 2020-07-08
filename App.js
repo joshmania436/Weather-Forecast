@@ -10,8 +10,17 @@ export default class WeatherScreen extends Component {
   }
 
   getWeather = async () => {
+    // for getting automatic location updates
+    var url;
+    if ('geolocation' in navigator) {
+      console.log(' GEOLOCATION AVAILABLE');
+      navigator.geolocation.getCurrentPosition(position => {
+        console.log(`Latitude${position.coords.latitude},Longitude${position.coords.longitude}`);
+        url = `https://fcc-weather-api.glitch.me/api/current?lat=${position.coords.latitude}&lon=${position.coords.longitude}`;
+
+      })
+    }
     //change latitude and longitude
-    var url = 'https://fcc-weather-api.glitch.me/api/current?lat=35&lon=139';
     return fetch(url)
       .then(response => response.json())
       .then(responseJson => {
@@ -29,7 +38,9 @@ export default class WeatherScreen extends Component {
   };
 
   render() {
-    if (this.state.weather === '') {
+    // destructured the weather state so to write only weather instead of this.state.weather
+    const { weather } = this.state
+    if (weather === '') {
       return (
         <View style={styles.container}>
           <Text>Loading...</Text>
@@ -47,17 +58,17 @@ export default class WeatherScreen extends Component {
               source={require('./weatherImg.png')}
             />
             <View style={styles.textContainer}>
-            <Text style={{ fontSize: 18}}>
-              {this.state.weather.main.temp}&deg;C
+              <Text style={{ fontSize: 18 }}>
+                {weather.main.temp}&deg;C
             </Text>
-            <Text style={{ fontSize: 20, margin:10}}>
-              humidity : {this.state.weather.main.humidity}
-            </Text>
-            <Text style={{fontSize: 20}}>
-              {this.state.weather.weather[0].description}
-            </Text>
+              <Text style={{ fontSize: 20, margin: 10 }}>
+                humidity : {weather.main.humidity}
+              </Text>
+              <Text style={{ fontSize: 20 }}>
+                {weather.weather[0].description}
+              </Text>
+            </View>
           </View>
-          </View>    
         </View>
       );
     }
@@ -66,27 +77,27 @@ export default class WeatherScreen extends Component {
 
 const styles = StyleSheet.create({
   container: {
-   flex:1
+    flex: 1
   },
-  subContainer : { 
-    flex: 1, 
-    borderWidth: 1, 
-    alignItems: 'center' 
-    },
-    title:{ 
-      marginTop: 50, 
-      fontSize: 30,
-    },
-    cloudImage :{ 
-      width: 200, 
-      height: 200, 
-      marginTop: 30 
-    },
-    textContainer : { 
-      flex: 1,
-      alignItems: 'center', 
-      flexDirection:'row', 
-      marginTop:-150
-    }
+  subContainer: {
+    flex: 1,
+    borderWidth: 1,
+    alignItems: 'center'
+  },
+  title: {
+    marginTop: 50,
+    fontSize: 30,
+  },
+  cloudImage: {
+    width: 200,
+    height: 200,
+    marginTop: 30
+  },
+  textContainer: {
+    flex: 1,
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginTop: -150
+  }
 });
 
